@@ -2,9 +2,11 @@ package com.simple.system.todo.service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.naming.directory.InvalidAttributesException;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +49,7 @@ public class ItemService {
 
 		// Set Item Description
 		item.setDescription(itemDTO.getDescription().strip());
+		item.setDueAt(itemDTO.getDueAt());
 
 		// Map Status from DTO to Item Entity
 		var temp = itemDTO.getStatus();
@@ -54,20 +57,18 @@ public class ItemService {
 			if (temp.equals(val))
 				status = temp;
 		}
-		item.setStatus(status.toString());
 		log.info("STATUS : " + status.toString());
-
-		item.setDueAt(itemDTO.getDueAt());
 
 		// Update CompletedAt if Status of Item is DONE
 		if (STATUS.DONE == status) {
 			item.setCompletedAt(LocalDate.now());
 		}
+		item.setStatus(status.toString());
 		item = itemRepository.save(item);
 		return item;
 	}
 
-	public Item updateItem(ItemDTO itemDTO) {
+	public Item updateItem(ItemDTO itemDTO) throws InvalidAttributesException {
 		Item item;
 		// Fetch 'Item' Object from the Database
 		if (null == itemDTO.getId()) {
@@ -78,12 +79,12 @@ public class ItemService {
 		if (optionalItem.isPresent())
 			item = optionalItem.get();
 		else
-			throw new IllegalArgumentException();
+			throw new NoSuchElementException();
 
 		var status = STATUS.valueOf(item.getStatus());
 		// Throw Exception if STATUS is PAST_DUE
 		if (STATUS.PAST_DUE == status) {
-			throw new IllegalArgumentException();
+			throw new InvalidAttributesException("");
 		}
 		// Map Status from DTO to Item Entity
 		var temp = itemDTO.getStatus();
@@ -91,13 +92,13 @@ public class ItemService {
 			if (temp.equals(val))
 				status = temp;
 		}
-		item.setStatus(status.toString());
 
 		// Set Item Description
-		if (STATUS.DONE == status) {
+		if (STATUS.NOT_DONE == STATUS.valueOf(item.getStatus()) && STATUS.DONE == status) {
 			item.setCompletedAt(LocalDate.now());
 		}
 
+		item.setStatus(status.toString());
 		// Update CompletedAt if Status of Item is DONE
 		item.setDescription(itemDTO.getDescription().strip());
 

@@ -13,13 +13,19 @@ import javax.persistence.Table;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @Entity
 @Table(name = "item")
 @EqualsAndHashCode
 @ToString
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Item implements Serializable {
 
 	@Id

@@ -3,11 +3,13 @@ package com.simple.system.todo.controller;
 import java.util.List;
 import java.util.Optional;
 
+import javax.naming.directory.InvalidAttributesException;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,6 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequestMapping(path = "/item")
 @Slf4j
+@Validated
 public class ItemController {
 
 	@Autowired
@@ -53,13 +56,13 @@ public class ItemController {
 	}
 
 	@PostMapping(path = "/add")
-	public ResponseEntity<Item> getItem(@Valid @RequestBody ItemDTO item) {
+	public ResponseEntity<Item> addItem(@Valid @RequestBody ItemDTO item) {
 		Item itemEntity = service.addItem(item);
 		return new ResponseEntity<Item>(itemEntity, HttpStatus.OK);
 	}
 
 	@PostMapping(path = "/update")
-	public ResponseEntity<Item> updateItem(@Valid @RequestBody ItemDTO item) {
+	public ResponseEntity<Item> updateItem(@Valid @RequestBody ItemDTO item) throws InvalidAttributesException {
 
 		Item itemEntity = service.updateItem(item);
 		return new ResponseEntity<Item>(itemEntity, HttpStatus.OK);
