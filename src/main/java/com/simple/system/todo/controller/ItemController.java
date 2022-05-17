@@ -32,14 +32,19 @@ public class ItemController {
 
 	@GetMapping(path = "/{id}")
 	public ResponseEntity<Item> getItem(@PathVariable(value = "id") Long id) {
-		Item item = service.getItem(id);
+		Item item;
+		Optional<Item> optionalItem = service.getItem(id);
+		if (optionalItem.isPresent())
+			item = optionalItem.get();
+		else
+			throw new IllegalArgumentException();
 		return new ResponseEntity<Item>(item, HttpStatus.OK);
 	}
 
 	@GetMapping(path = "/status")
-	public ResponseEntity<List<Item>> getAllItems(@RequestParam(value = "all") Optional<String> status) {
+	public ResponseEntity<List<Item>> getAllItems(@RequestParam Optional<String> param) {
 		List<Item> items;
-		if (!status.isPresent()) {
+		if (!param.isPresent()) {
 			items = service.getItemsNotDone();
 		} else {
 			items = service.getAllItems();
@@ -50,6 +55,13 @@ public class ItemController {
 	@PostMapping(path = "/add")
 	public ResponseEntity<Item> getItem(@Valid @RequestBody ItemDTO item) {
 		Item itemEntity = service.addItem(item);
+		return new ResponseEntity<Item>(itemEntity, HttpStatus.OK);
+	}
+
+	@PostMapping(path = "/update")
+	public ResponseEntity<Item> updateItem(@Valid @RequestBody ItemDTO item) {
+
+		Item itemEntity = service.updateItem(item);
 		return new ResponseEntity<Item>(itemEntity, HttpStatus.OK);
 	}
 

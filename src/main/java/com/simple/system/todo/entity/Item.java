@@ -34,6 +34,9 @@ public class Item implements Serializable {
 	private String status;
 
 	@Column
+	private LocalDate dueAt;
+
+	@Column
 	@CreationTimestamp
 	private LocalDate createdAt;
 
@@ -90,6 +93,14 @@ public class Item implements Serializable {
 
 	public void setCompletedAt(LocalDate completedAt) {
 		this.completedAt = completedAt;
+	}
+
+	public LocalDate getDueAt() {
+		return dueAt;
+	}
+
+	public void setDueAt(LocalDate dueAt) {
+		this.dueAt = dueAt;
 	}
 
 }
