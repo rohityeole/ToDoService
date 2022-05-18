@@ -33,6 +33,12 @@ public class ItemController {
 	@Autowired
 	private ItemService service;
 
+	/**
+	 * GET API Method to Get One Item from To Do list by ID
+	 * 
+	 * @param id
+	 * @return
+	 */
 	@GetMapping(path = "/{id}")
 	public ResponseEntity<Item> getItem(@PathVariable(value = "id") Long id) {
 		Item item;
@@ -44,6 +50,14 @@ public class ItemController {
 		return new ResponseEntity<Item>(item, HttpStatus.OK);
 	}
 
+	/**
+	 * 
+	 * GET API Method to Return list of All items having Status as `NOT_DONE`
+	 * Additionally, It returns all items from without any filter for STATUS if called with `?param+true`
+	 * 
+	 * @param param
+	 * @return List<Item>
+	 */
 	@GetMapping(path = "/status")
 	public ResponseEntity<List<Item>> getAllItems(@RequestParam Optional<String> param) {
 		List<Item> items;
@@ -55,12 +69,24 @@ public class ItemController {
 		return new ResponseEntity<List<Item>>(items, HttpStatus.OK);
 	}
 
+	/**
+	 * POST API method to Add Item 
+	 * 
+	 * @param item
+	 * @return Item
+	 */
 	@PostMapping(path = "/add")
 	public ResponseEntity<Item> addItem(@Valid @RequestBody ItemDTO item) {
 		Item itemEntity = service.addItem(item);
 		return new ResponseEntity<Item>(itemEntity, HttpStatus.OK);
 	}
 
+	/**
+	 * 
+	 * 
+	 * @param item
+	 * @return
+	 */
 	@PostMapping(path = "/update")
 	public ResponseEntity<Item> updateItem(@Valid @RequestBody ItemDTO item) throws InvalidAttributesException {
 
